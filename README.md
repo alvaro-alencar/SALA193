@@ -10,16 +10,25 @@ Em vez de narrar a História como mapa, tratado ou linha do tempo, SALA193 trans
 
 O narrador principal é João: uma personificação literária do Brasil, mas sem dizer isso ao leitor. João não sabe que carrega essa dimensão. Ele apenas observa, sente, tenta conciliar, erra, improvisa, se envolve e conta o que viu.
 
-## Objetivo
+## A ideia em uma frase
 
-Criar uma engine mínima para:
+SALA193 é uma mesa de RPG social onde personagens são controlados por agentes, consequências são arbitradas por um mestre e os acontecimentos viram cena literária.
 
-1. definir fichas de personagens;
-2. simular interações entre agentes;
-3. manter memória e reputação;
-4. gerar logs estruturados;
-5. converter acontecimentos em cenas narrativas;
-6. permitir ciclos longos de convivência emergente.
+## Arquitetura atual
+
+```text
+Ficha do personagem
+        ↓
+AgentAdapter escolhe ação
+        ↓
+GameMaster resolve consequência
+        ↓
+Rules executam teste dramático
+        ↓
+Memória e relações mudam
+        ↓
+Narrator escreve cena
+```
 
 ## Princípio narrativo
 
@@ -37,13 +46,20 @@ Certo:
 
 Os personagens nunca sabem que são países. O leitor também não precisa saber. A camada histórica é o organismo oculto da ficção.
 
-## Status
+## Rodando localmente
 
-Projeto em fundação.
+```bash
+git clone https://github.com/alvaro-alencar/SALA193.git
+cd SALA193
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate   # Windows PowerShell
+pip install -e .[dev]
+pytest
+sala193 run examples/scenarios/first_room.yaml --turns 4 --adapter rules
+```
 
-Primeira etapa: requisitos, especificações e arquitetura mínima da simulação.
-
-## Estrutura prevista
+## Estrutura
 
 ```text
 SALA193/
@@ -53,12 +69,19 @@ SALA193/
     character_model.md
     simulation_loop.md
     narrative_rules.md
+    rpg_architecture.md
+    quickstart.md
   sala193/
     __init__.py
     models.py
+    actions.py
+    agents.py
+    rules.py
+    gamemaster.py
     engine.py
     memory.py
     narrator.py
+    cli.py
   examples/
     characters/
       joao.yaml
@@ -67,6 +90,24 @@ SALA193/
       first_room.yaml
   tests/
 ```
+
+## Status
+
+MVP em evolução.
+
+O projeto já possui:
+
+- fichas YAML;
+- engine de turnos;
+- adapter determinístico;
+- Game Master;
+- teste dramático determinístico;
+- memória e relações;
+- narrador em story mode;
+- CLI básica;
+- testes iniciais.
+
+Próximo passo: adicionar `LLMAgentAdapter` para que personagens proponham ações por IA mantendo saída estruturada.
 
 ## Licença
 
