@@ -237,6 +237,7 @@ class SimulationEvent(BaseModel):
     relationship_deltas: list[RelationshipDelta] = Field(default_factory=list)
     memory_tags: list[str] = Field(default_factory=list)
     future_hooks: list[str] = Field(default_factory=list)
+    resolution: dict[str, Any] = Field(default_factory=dict)
 
 
 class SimulationLog(BaseModel):
