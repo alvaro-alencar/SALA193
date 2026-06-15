@@ -23,10 +23,18 @@ Expected result:
 João validado com sucesso.
 ```
 
-## 3. Run the first simulation
+## 3. Inspect the hidden table setup
 
 ```bash
-sala193 run examples/scenarios/first_room.yaml --turns 4
+sala193 inspect examples/scenarios/first_room.yaml
+```
+
+This command is for writers' room use. It may show private inspiration keys and should not be treated as story output.
+
+## 4. Run the first simulation
+
+```bash
+sala193 run examples/scenarios/first_room.yaml --turns 4 --adapter rules
 ```
 
 This creates:
@@ -37,35 +45,39 @@ logs/latest/drama_log.md
 logs/latest/scene_joao.md
 ```
 
-## 4. Read the generated scene
+## 5. Try a quiet/passive table
+
+```bash
+sala193 run examples/scenarios/first_room.yaml --turns 2 --adapter passive --output-dir logs/passive
+```
+
+This is useful for testing scene and memory plumbing without active conflict.
+
+## 6. Read the generated scene
 
 ```bash
 cat logs/latest/scene_joao.md
 ```
 
-## 5. Run tests
+## 7. Run tests
 
 ```bash
 pytest
 ```
 
-## 6. Current limitations
+## 8. Current architecture
+
+SALA193 now separates four roles:
+
+- character sheet: who the person is;
+- agent adapter: who plays the character;
+- game master: who resolves consequences;
+- narrator: who converts logs into prose.
 
 The current engine is deterministic and simple. It does not yet use external LLMs.
 
-The purpose of this version is to prove the skeleton:
+## 9. Next step
 
-- character sheets load;
-- relationships update;
-- events are generated;
-- memories are appended;
-- scenes are produced without exposing the hidden geopolitical layer.
+Add an `LLMAgentAdapter` that returns structured `ProposedAction` objects from a model call.
 
-## 7. Next step
-
-Add an `AgentAdapter` interface so actions can be proposed by:
-
-1. deterministic rules;
-2. local LLMs;
-3. remote LLM APIs;
-4. hybrid writer's-room mode.
+The agent decides. The Game Master resolves. The narrator writes.
