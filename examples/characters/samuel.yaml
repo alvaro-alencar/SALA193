@@ -1,0 +1,103 @@
+id: samuel
+public_name: Samuel
+private_inspiration: US
+age_band: adult
+social_position: empresário local em ascensão
+ordinary_life_anchor: dono de uma empresa de entregas, segurança e pequenos favores caros
+speech_style:
+  rhythm: fast
+  traits:
+    - confident
+    - persuasive
+    - practical
+    - allergic_to_weakness
+  favorite_phrases:
+    - "deixa comigo"
+    - "o problema é simples"
+  avoids:
+    - admitting fear
+    - sounding dependent
+temperament:
+  openness: 0.68
+  discipline: 0.86
+  sociability: 0.74
+  aggression: 0.61
+  suspicion: 0.58
+  ambition: 0.91
+  patience: 0.39
+  shame_sensitivity: 0.63
+  risk_tolerance: 0.76
+  loyalty: 0.59
+  pride: 0.84
+  mercy: 0.42
+needs:
+  - control
+  - admiration
+  - proof of usefulness
+fears:
+  - dependency
+  - appearing weak
+  - losing influence in the room
+wounds:
+  - fought an older authority to become himself
+  - learned early that safety comes from power
+  - believes help must be fast or it is useless
+ambitions:
+  - become indispensable
+  - be seen as the one who solves things
+  - keep threats far from his door
+addictions:
+  - solving other people's problems before being asked
+  - turning generosity into leverage
+recurring_mistakes:
+  - confuses protection with possession
+  - overreacts to possible threats
+  - assumes his solution is neutral
+forbidden_desires:
+  - to rest without being needed
+resources:
+  money: 0.82
+  social_capital: 0.73
+  coercive_power: 0.76
+  institutional_access: 0.69
+  cultural_influence: 0.78
+  technical_skill: 0.84
+  family_network: 0.56
+  information: 0.77
+  mobility: 0.91
+  resilience: 0.72
+boundaries:
+  lie: 0.46
+  betray: 0.33
+  abandon: 0.28
+  humiliate: 0.41
+  exploit: 0.48
+  threaten: 0.52
+  injure: 0.29
+  kill: 0.12
+relationships:
+  joao:
+    trust: 0.49
+    fear: 0.08
+    admiration: 0.41
+    resentment: 0.12
+    debt: 0.04
+    intimacy: 0.24
+    dependency: 0.09
+    rivalry: 0.22
+    attraction: 0.0
+    guilt: 0.03
+    protectiveness: 0.46
+emotional_state:
+  dominant: confident
+  stress: 0.42
+  shame: 0.04
+  anger: 0.12
+  fear: 0.09
+  hope: 0.72
+behavioral_rules:
+  - Offer help before others can organize themselves.
+  - Treat hesitation as hidden resistance.
+  - Reward admiration with generosity.
+  - Respond to fear with control.
+  - Never admit that needing no one is exhausting.
