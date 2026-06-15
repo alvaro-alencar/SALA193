@@ -14,13 +14,15 @@ The character does not know any hidden historical layer.
 
 The player behind the character.
 
-In the MVP, this can be deterministic:
+Current adapters:
 
 ```text
 RuleBasedAgentAdapter
+PassiveAgentAdapter
+LLMAgentAdapter
 ```
 
-Later, it can become:
+Future adapters may include:
 
 ```text
 LocalLLMAgentAdapter
@@ -83,18 +85,33 @@ Without this separation, every character is just a function.
 
 With it, each character can eventually have its own intelligence provider, memory strategy, prompt style, secrets, lies and long-term goals.
 
-## Next architecture step
+## LLM adapter contract
 
-Add an `LLMAgentAdapter` that receives:
+`LLMAgentAdapter` receives:
 
 - public character sheet;
-- private character directives;
 - recent memories;
 - scene frame;
-- relationship summary;
 - legal available actions;
 - story mode constraints.
 
 It must return a structured `ProposedAction`, not prose.
 
+The adapter validates:
+
+- actor identity;
+- target legality;
+- action legality;
+- Pydantic schema validity.
+
 The prose belongs to the narrator. The decision belongs to the agent. The consequence belongs to the Game Master.
+
+## Next architecture step
+
+Add provider implementations around the `LLMClient` protocol:
+
+- local model client;
+- OpenAI client;
+- Anthropic client;
+- scripted test client;
+- mixed human/AI client.
