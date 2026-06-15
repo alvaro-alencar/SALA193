@@ -76,6 +76,7 @@ SALA193/
     models.py
     actions.py
     agents.py
+    llm_agent.py
     rules.py
     gamemaster.py
     engine.py
@@ -100,6 +101,7 @@ O projeto já possui:
 - fichas YAML;
 - engine de turnos;
 - adapter determinístico;
+- adapter estruturado para LLM;
 - Game Master;
 - teste dramático determinístico;
 - memória e relações;
@@ -107,7 +109,7 @@ O projeto já possui:
 - CLI básica;
 - testes iniciais.
 
-Próximo passo: adicionar `LLMAgentAdapter` para que personagens proponham ações por IA mantendo saída estruturada.
+Próximo passo: adicionar clients reais ao `LLMClient`, começando por um provider local ou OpenAI, mantendo a decisão estruturada em `ProposedAction`.
 
 ## Licença
 
