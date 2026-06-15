@@ -7,6 +7,7 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 
+from sala193.agents import get_agent_adapter
 from sala193.engine import SimulationEngine
 from sala193.models import Character, Scenario, SimulationLog
 from sala193.narrator import Narrator
@@ -28,12 +29,14 @@ def run(
     characters_dir: Path = typer.Option(Path("examples/characters"), help="Directory containing character YAML files."),
     turns: int = typer.Option(5, help="Number of turns to simulate."),
     output_dir: Path = typer.Option(Path("logs/latest"), help="Directory to write logs."),
+    adapter: str = typer.Option("rules", help="Agent adapter: rules or passive."),
 ) -> None:
     """Run a simulation scenario."""
     scenario = Scenario.from_yaml(scenario_file)
     characters = load_characters(characters_dir, scenario)
+    agent_adapter = get_agent_adapter(adapter)
 
-    engine = SimulationEngine(characters=characters, scenario=scenario)
+    engine = SimulationEngine(characters=characters, scenario=scenario, agent_adapter=agent_adapter)
     log = engine.run(turns=turns)
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -47,7 +50,8 @@ def run(
     scene_path.write_text(narrator.scene(log, pov=scenario.pov), encoding="utf-8")
 
     console.print(Panel.fit(
-        f"Simulação concluída.\nEventos: {events_path}\nDrama log: {drama_path}\nCena: {scene_path}",
+        f"Simulação concluída com adapter '{agent_adapter.name}'.\n"
+        f"Eventos: {events_path}\nDrama log: {drama_path}\nCena: {scene_path}",
         title="SALA193",
     ))
 
@@ -68,6 +72,23 @@ def scene(
     log = SimulationLog(scenario_id="from_file", events=events)
     narrator = Narrator(characters)
     console.print(narrator.scene(log, pov=pov))
+
+
+@app.command()
+def inspect(
+    scenario_file: Path,
+    characters_dir: Path = typer.Option(Path("examples/characters"), help="Directory containing character YAML files."),
+) -> None:
+    """Print the hidden table setup for writers' room use."""
+    scenario = Scenario.from_yaml(scenario_file)
+    characters = load_characters(characters_dir, scenario)
+    lines = [f"Cenário: {scenario.title}", "", "Personagens carregados:"]
+    for character in characters:
+        lines.append(
+            f"- {character.public_name} ({character.id}) | inspiração privada: {character.private_inspiration or 'não definida'} | "
+            f"âncora: {character.ordinary_life_anchor}"
+        )
+    console.print("\n".join(lines))
 
 
 def load_characters(characters_dir: Path, scenario: Scenario) -> list[Character]:
