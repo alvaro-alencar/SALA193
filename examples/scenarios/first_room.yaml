@@ -1,0 +1,35 @@
+id: first_room
+title: A primeira noite no Bar do Antônio
+pov: joao
+frames:
+  - id: bar_debt_001
+    location: Bar do Antônio
+    time: quinta-feira à noite
+    participants:
+      - joao
+      - samuel
+    pressure: João está com uma dívida pequena, mas pública demais para ser pequena de verdade.
+    dramatic_question: João aceita ajuda de Samuel sem virar devedor dele diante da mesa?
+    context: A televisão está ligada sem som. Antônio seca copos no balcão. A conta de João ficou aberta por tempo demais e Samuel percebeu.
+    available_actions:
+      - talk
+      - offer
+      - request
+      - refuse
+      - leave
+
+  - id: bar_after_offer_002
+    location: Bar do Antônio
+    time: mais tarde na mesma noite
+    participants:
+      - joao
+      - samuel
+    pressure: Samuel já ajudou João uma vez e agora a gentileza começa a parecer uma coleira.
+    dramatic_question: João consegue agradecer sem prometer obediência?
+    context: A mesa tenta voltar ao normal, mas o recibo continua perto do copo de João.
+    available_actions:
+      - talk
+      - refuse
+      - apologize
+      - leave
+      - threaten
