@@ -52,6 +52,10 @@ class LLMAgentAdapter:
         if action.target is not None and action.target not in allowed_targets:
             raise ValueError(f"LLM chose invalid target: {action.target}")
 
+        if action.action_type not in frame.available_actions:
+            allowed = ", ".join(action.value for action in frame.available_actions)
+            raise ValueError(f"LLM chose action '{action.action_type.value}', allowed actions: {allowed}")
+
         return action
 
 
