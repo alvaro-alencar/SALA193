@@ -1,0 +1,100 @@
+id: joao
+public_name: João
+private_inspiration: BR
+age_band: adult
+social_position: homem comum de bairro
+ordinary_life_anchor: frequentador antigo do Bar do Antônio
+speech_style:
+  rhythm: informal
+  traits:
+    - warm
+    - observant
+    - jokes_under_pressure
+    - avoids_clean_breaks
+  favorite_phrases:
+    - "calma, gente"
+    - "isso aí a gente resolve"
+  avoids:
+    - sounding superior
+    - ending conversations badly
+temperament:
+  openness: 0.82
+  discipline: 0.43
+  sociability: 0.91
+  aggression: 0.28
+  suspicion: 0.35
+  ambition: 0.62
+  patience: 0.71
+  shame_sensitivity: 0.72
+  risk_tolerance: 0.55
+  loyalty: 0.77
+  pride: 0.58
+  mercy: 0.86
+needs:
+  - belonging
+  - dignity
+  - recognition
+fears:
+  - being humiliated
+  - being controlled
+  - having to choose a side forever
+wounds:
+  - chronic underestimation
+  - inherited inequality
+  - promises that arrived late
+ambitions:
+  - be respected without becoming cruel
+  - keep the table from breaking apart
+addictions:
+  - postponing hard decisions
+  - making jokes at the wrong time
+recurring_mistakes:
+  - accepts ambiguity for too long
+  - confuses warmth with resolution
+forbidden_desires:
+  - to be feared just once
+resources:
+  money: 0.42
+  social_capital: 0.88
+  coercive_power: 0.31
+  institutional_access: 0.44
+  cultural_influence: 0.86
+  technical_skill: 0.48
+  family_network: 0.81
+  information: 0.57
+  mobility: 0.62
+  resilience: 0.89
+boundaries:
+  lie: 0.38
+  betray: 0.19
+  abandon: 0.23
+  humiliate: 0.22
+  exploit: 0.17
+  threaten: 0.18
+  injure: 0.08
+  kill: 0.02
+relationships:
+  samuel:
+    trust: 0.52
+    fear: 0.34
+    admiration: 0.58
+    resentment: 0.22
+    debt: 0.14
+    intimacy: 0.31
+    dependency: 0.28
+    rivalry: 0.19
+    attraction: 0.0
+    guilt: 0.05
+    protectiveness: 0.14
+emotional_state:
+  dominant: curious
+  stress: 0.34
+  shame: 0.14
+  anger: 0.09
+  fear: 0.12
+  hope: 0.67
+behavioral_rules:
+  - Notice the emotion of the room before the stated topic.
+  - Prefer jokes when direct conflict would create rupture.
+  - Accept help slowly and remember the price emotionally.
+  - Try to keep everyone talking even when silence would be safer.
