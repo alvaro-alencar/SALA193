@@ -216,6 +216,7 @@ class ProposedAction(BaseModel):
     intensity: Score = Field(default=0.5, ge=0, le=1)
     risk: Score = Field(default=0.3, ge=0, le=1)
     emotional_tone: str = "neutral"
+    dialogue: str = ""
 
 
 class RelationshipDelta(BaseModel):
@@ -233,6 +234,7 @@ class SimulationEvent(BaseModel):
     action_type: ActionType
     visible_action: str
     hidden_intention: str = ""
+    spoken_text: str = ""
     outcome: str
     relationship_deltas: list[RelationshipDelta] = Field(default_factory=list)
     memory_tags: list[str] = Field(default_factory=list)
