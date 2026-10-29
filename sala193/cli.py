@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import typer
+from dotenv import load_dotenv
 from rich.console import Console
 from rich.panel import Panel
 
-from sala193.agents import get_agent_adapter
+from sala193.agents import FallbackAgentAdapter, get_agent_adapter
+from sala193.llm_agent import LLMAgentAdapter
+from sala193.openrouter_client import OpenRouterClient, OpenRouterError
 from sala193.engine import SimulationEngine
 from sala193.models import Character, Scenario, SimulationLog
 from sala193.narrator import Narrator
@@ -29,12 +33,26 @@ def run(
     characters_dir: Path = typer.Option(Path("examples/characters"), help="Directory containing character YAML files."),
     turns: int = typer.Option(5, help="Number of turns to simulate."),
     output_dir: Path = typer.Option(Path("logs/latest"), help="Directory to write logs."),
-    adapter: str = typer.Option("rules", help="Agent adapter: rules or passive."),
+    adapter: str = typer.Option("rules", help="Agent adapter: rules, passive or openrouter."),
+    model: str = typer.Option("", help="OpenRouter model ID; defaults to OPENROUTER_MODEL."),
+    fallback_rules: bool = typer.Option(False, help="Allow rules fallback if OpenRouter fails."),
 ) -> None:
     """Run a simulation scenario."""
+    if not 1 <= turns <= 20:
+        raise typer.BadParameter("turns deve estar entre 1 e 20 para controlar o custo.")
+    load_dotenv()
     scenario = Scenario.from_yaml(scenario_file)
     characters = load_characters(characters_dir, scenario)
-    agent_adapter = get_agent_adapter(adapter)
+    if adapter.strip().lower() == "openrouter":
+        try:
+            selected_model = model or os.environ.get("OPENROUTER_MODEL", "")
+            agent_adapter = LLMAgentAdapter(OpenRouterClient(model=selected_model))
+            if fallback_rules:
+                agent_adapter = FallbackAgentAdapter(agent_adapter)
+        except OpenRouterError as exc:
+            raise typer.BadParameter(str(exc)) from None
+    else:
+        agent_adapter = get_agent_adapter(adapter)
 
     engine = SimulationEngine(characters=characters, scenario=scenario, agent_adapter=agent_adapter)
     log = engine.run(turns=turns)
