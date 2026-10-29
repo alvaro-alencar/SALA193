@@ -45,6 +45,7 @@ class GameMaster:
             action_type=action.action_type,
             visible_action=action.visible_intention,
             hidden_intention=action.hidden_intention,
+            spoken_text=action.dialogue,
             outcome=outcome,
             relationship_deltas=deltas,
             memory_tags=tags,
