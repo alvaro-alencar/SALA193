@@ -61,6 +61,20 @@ class Narrator:
         actor = self._name(event.actor)
         target = self._name(event.target) if event.target else None
 
+        if event.spoken_text.strip():
+            gestures = {
+                "talk": f"{actor} puxou conversa.",
+                "offer": f"{actor} se inclinou na direção de {target or 'alguém'}.",
+                "refuse": f"{actor} balançou a cabeça, sem sorrir.",
+                "request": f"{actor} esperou uma brecha para pedir.",
+                "threaten": f"{actor} baixou a voz.",
+                "apologize": f"{actor} demorou a encontrar as palavras.",
+                "leave": f"{actor} se levantou.",
+            }
+            gesture = gestures.get(event.action_type.value, f"{actor} tomou a palavra.")
+            spoken = " ".join(event.spoken_text.strip().split())
+            return [gesture, f"— {spoken}"]
+
         if event.action_type.value == "offer" and target:
             return [
                 f"{actor} chegou sorrindo como quem já tinha decidido alguma coisa antes de entrar.",
