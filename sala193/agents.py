@@ -72,3 +72,32 @@ def get_agent_adapter(name: str) -> AgentAdapter:
     if normalized == "passive":
         return PassiveAgentAdapter()
     raise ValueError(f"unknown agent adapter: {name}")
+
+
+class FallbackAgentAdapter:
+    """Use rule-based decisions only if explicitly requested and the model fails."""
+
+    name = "openrouter+fallback"
+
+    def __init__(self, primary: AgentAdapter):
+        self.primary = primary
+        self.fallback = RuleBasedAgentAdapter()
+
+    def propose(
+        self,
+        actor: Character,
+        frame: SceneFrame,
+        turn_index: int,
+        characters: dict[str, Character],
+    ) -> ProposedAction:
+        try:
+            return self.primary.propose(actor, frame, turn_index, characters)
+        except (RuntimeError, ValueError):
+            import warnings
+
+            warnings.warn(
+                f"Falha de IA para {actor.public_name}; usando regras locais neste turno.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            return self.fallback.propose(actor, frame, turn_index, characters)
