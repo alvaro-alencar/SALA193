@@ -9,22 +9,14 @@ from sala193.models import Character, Mode, ProposedAction, SceneFrame
 
 
 class LLMClient(Protocol):
-    """Minimal client contract for model providers.
-
-    Any provider can implement this contract: OpenAI, Anthropic, local models,
-    a test fake, or a future orchestration layer.
-    """
+    """Provider-independent structured model client."""
 
     def complete_json(self, prompt: str) -> dict:
         ...
 
 
 class LLMAgentAdapter:
-    """Agent adapter that asks a model for a structured ProposedAction.
-
-    This adapter does not generate prose. It generates decisions.
-    The narrator remains responsible for prose.
-    """
+    """The player's AI: chooses an action, not its consequences."""
 
     name = "llm"
 
@@ -38,23 +30,23 @@ class LLMAgentAdapter:
         turn_index: int,
         characters: dict[str, Character],
     ) -> ProposedAction:
-        prompt = build_agent_prompt(actor=actor, frame=frame, turn_index=turn_index, characters=characters)
-        raw = self.client.complete_json(prompt)
+        prompt = build_agent_prompt(
+            actor=actor, frame=frame, turn_index=turn_index, characters=characters,
+        )
         try:
-            action = ProposedAction(**raw)
+            action = ProposedAction.model_validate(self.client.complete_json(prompt))
         except ValidationError as exc:
-            raise ValueError(f"LLM returned invalid ProposedAction: {exc}") from exc
+            raise ValueError(f"LLM returned an invalid action: {exc}") from exc
 
         if action.actor != actor.id:
-            raise ValueError(f"LLM tried to act as '{action.actor}', expected '{actor.id}'")
+            raise ValueError("LLM tried to act as a different character")
 
         allowed_targets = set(frame.participants) - {actor.id}
         if action.target is not None and action.target not in allowed_targets:
-            raise ValueError(f"LLM chose invalid target: {action.target}")
+            raise ValueError("LLM chose a target outside this scene")
 
         if action.action_type not in frame.available_actions:
-            allowed = ", ".join(action.value for action in frame.available_actions)
-            raise ValueError(f"LLM chose action '{action.action_type.value}', allowed actions: {allowed}")
+            raise ValueError("LLM chose an action not available in this scene")
 
         return action
 
@@ -65,36 +57,58 @@ def build_agent_prompt(
     turn_index: int,
     characters: dict[str, Character],
 ) -> str:
-    visible_characters = {
-        character_id: character.public_dict(mode=Mode.STORY)
-        for character_id, character in characters.items()
-        if character_id in frame.participants
+    """Give one actor its own inner life, never another actor's private state."""
+    actor_sheet = actor.public_dict(mode=Mode.STORY)
+    actor_sheet["memories"] = [
+        memory.model_dump(mode="json") for memory in actor.memories[-8:]
+    ]
+    actor_sheet["relationships"] = {
+        other_id: relation.model_dump(mode="json")
+        for other_id, relation in actor.relationships.items()
+        if other_id in frame.participants and other_id != actor.id
     }
 
+    others = [
+        {
+            "id": other.id,
+            "public_name": other.public_name,
+            "social_position": other.social_position,
+            "ordinary_life_anchor": other.ordinary_life_anchor,
+        }
+        for other in characters.values()
+        if other.id in frame.participants and other.id != actor.id
+    ]
+
     payload = {
-        "task": "Choose one action for the actor in this SALA193 tabletop scene. Return only JSON.",
+        "task": (
+            "Você é o JOGADOR deste personagem num RPG de convivência. "
+            "Decida uma única ação e uma fala breve, sem determinar o resultado. "
+            "Responda apenas em JSON, com os campos especificados."
+        ),
         "rules": [
-            "Do not write prose.",
-            "Do not mention countries, nations, geopolitics, borders, empires or historical mappings.",
-            "The character does not know any hidden inspiration layer.",
-            "Choose a human-scale action that fits the character sheet and current scene pressure.",
-            "Return a valid ProposedAction object.",
+            "Todos os textos e falas devem estar em português brasileiro.",
+            "Nunca mencione países, nações, geopolítica ou inspirações históricas.",
+            "Não revele sua intenção oculta em dialogue.",
+            "Não declare o resultado da ação: somente a intenção e a fala.",
+            "Você conhece suas próprias memórias, mas não as memórias ou intenções dos demais.",
+            "A ação precisa estar entre as disponíveis nesta cena.",
+            "As falas devem soar naturais, específicas, sem discursos explicativos.",
         ],
-        "schema": {
+        "fields": {
             "actor": actor.id,
-            "target": "one participant id or null",
+            "target": "outro participante ou null",
             "action_type": [action.value for action in frame.available_actions],
-            "visible_intention": "what others can see the actor trying to do",
-            "hidden_intention": "what the actor privately wants, if any",
-            "intensity": "float from 0.0 to 1.0",
-            "risk": "float from 0.0 to 1.0",
-            "emotional_tone": "short phrase",
+            "visible_intention": "ação pretendida, descritiva, sem resultado",
+            "hidden_intention": "motivação íntima não dita, ou string vazia",
+            "intensity": "número de 0 a 1",
+            "risk": "número de 0 a 1",
+            "emotional_tone": "emoção predominante",
+            "dialogue": "frase curta que o personagem efetivamente diz, ou string vazia",
         },
         "turn_index": turn_index,
-        "actor_id": actor.id,
         "scene": frame.model_dump(mode="json"),
-        "characters": visible_characters,
-        "recent_memories": [memory.model_dump(mode="json") for memory in actor.memories[-8:]],
+        "you": actor_sheet,
+        "others_visible": others,
     }
 
     return json.dumps(payload, ensure_ascii=False, indent=2)
