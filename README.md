@@ -30,6 +30,20 @@ Memória e relações mudam
 Narrator escreve cena
 ```
 
+## Jogadores de IA com OpenRouter
+
+A versão atual pode usar OpenRouter para decisões e falas dos personagens.
+Configure a chave em .env (local) ou como segredo OPENROUTER_API_KEY no GitHub Actions.
+
+Para executar localmente:
+
+~~~bash
+sala193 run examples/scenarios/first_room.yaml --adapter openrouter --turns 2
+~~~
+
+Ou execute pelo GitHub em Actions → SALA193 - Simular com IA.
+Leia docs/openrouter.md antes de começar. Cada personagem ativo consome uma chamada por turno.
+
 ## Princípio narrativo
 
 A simulação não deve produzir relatórios geopolíticos. Deve produzir dramaturgia.
@@ -109,7 +123,7 @@ O projeto já possui:
 - CLI básica;
 - testes iniciais.
 
-Próximo passo: adicionar clients reais ao `LLMClient`, começando por um provider local ou OpenAI, mantendo a decisão estruturada em `ProposedAction`.
+O primeiro client real já usa OpenRouter com JSON Schema. Próximos passos: persistência entre sessões, narrador literário por IA e cenas com mais personagens.
 
 ## Licença
 
