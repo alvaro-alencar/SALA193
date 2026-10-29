@@ -79,3 +79,20 @@ sala193 run examples/scenarios/first_room.yaml --turns 2 --adapter openrouter --
 
 https://openrouter.ai/docs/api/reference/overview
 https://openrouter.ai/docs/guides/features/structured-outputs
+
+
+## Executar no GitHub (sem instalar nada localmente)
+
+1. Abra Settings → Secrets and variables → Actions no repositório.
+2. Clique em New repository secret.
+3. Use exatamente o nome OPENROUTER_API_KEY e cole sua chave.
+4. Abra Actions → SALA193 - Simular com IA → Run workflow.
+5. Escolha 1 ou 2 turnos e um modelo compatível com JSON Schema.
+6. Depois da execução, baixe o artifact sala193-cenas, que contém a cena e os registros.
+
+Links diretos:
+- https://github.com/alvaro-alencar/SALA193/settings/secrets/actions
+- https://github.com/alvaro-alencar/SALA193/actions/workflows/simulate.yml
+
+O segredo não é revelado no repositório público. Não escreva a chave em variáveis públicas, inputs do workflow, mensagens ou código.
+O workflow não roda sozinho: apenas quando acionado manualmente.
