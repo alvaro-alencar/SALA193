@@ -1,0 +1,57 @@
+name: SALA193 - Simular com IA
+
+on:
+  workflow_dispatch:
+    inputs:
+      turns:
+        description: "Turnos (até 20, dois agentes ativos por turno)"
+        required: true
+        type: choice
+        default: "2"
+        options: ["1", "2", "3", "5", "10"]
+      model:
+        description: "Modelo OpenRouter compatível com JSON Schema"
+        required: true
+        type: string
+        default: "openai/gpt-4o-mini"
+
+permissions:
+  contents: read
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar SALA193
+        run: pip install -e .
+      - name: Conferir segredo
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "Falta OPENROUTER_API_KEY em Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+      - name: Simular com OpenRouter
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          RUN_MODEL: ${{ inputs.model }}
+          RUN_TURNS: ${{ inputs.turns }}
+        run: |
+          sala193 run examples/scenarios/first_room.yaml \
+            --adapter openrouter \
+            --model "$RUN_MODEL" \
+            --turns "$RUN_TURNS" \
+            --output-dir logs/github
+      - name: Publicar cenas e registros
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sala193-cenas
+          path: logs/github/
+          retention-days: 7
